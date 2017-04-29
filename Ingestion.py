@@ -15,25 +15,30 @@ def pseudo_cron_job(get_from_url, push_to_url):
 
         updates = requests.get(get_from_url, headers=headers_get)  # Update to include time parameters
         updates_df = updates.json()
+        print updates_df
 
         forward = []
         if(len(updates_df["sensors"])>0):
-            for i in range(len(updates_df["sensors"][0])):
-                forward.append({"weight": updates_df["sensors"][1]["readings"][0]["sensorValue"]})
-            print json.dumps(forward)
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(push_to_url+updates_df["sensors"][0]["readings"][0]["sensorValue"]+"/collections", data=json.dumps(forward), headers=headers)
+            for i in range(len(updates_df["sensors"][0])):
+                forward.append({"collection":{"weight": updates_df["sensors"][0]["readings"][i]["sensorValue"]}})
+                r = requests.post(push_to_url + updates_df["sensors"][1]["readings"][i]["sensorValue"] + "/collections", data=json.dumps(forward[i]), headers=headers)
+            print json.dumps(forward)
+
+
+            #r = requests.post(push_to_url+updates_df["sensors"][0]["readings"][0]["sensorValue"]+"/collections", data=json.dumps(forward), headers=headers)
+            print r.status_code
             if (r.status_code<200 or r.status_code>299):
                 print r.status_code
                 print "post failed"
                 return False
         time.sleep(10)
 
-time_from = datetime.datetime.now() - datetime.timedelta(seconds=10)
+time_from = datetime.datetime.now() - datetime.timedelta(hours=13, seconds=10)
 str_time_from = str(time_from.year)+'-0'+str(time_from.month)+'-'+str(time_from.day)+'T'+str(time_from.hour - 1)+':'+str(time_from.minute)+':'+str(time_from.second)+'Z'
 #print str_time_from
 url_to_use = urllib.quote_plus(str_time_from)
-collect_data_url = "https://swagger.stephen-gibson.iotpdev.com/api/1/reporting/devices/e17bb9b1-969c-4adf-8c36-812d8ae962eb?since="+url_to_use+"&reportingQueryType=NORMAL"
+collect_data_url = "https://swagger.stephen-gibson.iotpdev.com/api/1/reporting/devices/d12a6dbd-3462-435c-8629-5788be1f783a?since="+url_to_use+"&reportingQueryType=NORMAL"
 
 push_to_url_glob = 'http://174.129.63.189:8080/postcodes/'
 
