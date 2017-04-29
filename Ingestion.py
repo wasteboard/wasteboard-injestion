@@ -29,7 +29,7 @@ def pseudo_cron_job(get_from_url, push_to_url):
                 return False
         time.sleep(10)
 
-time_from = datetime.datetime.now() - datetime.timedelta(seconds=1000)
+time_from = datetime.datetime.now() - datetime.timedelta(seconds=10)
 str_time_from = str(time_from.year)+'-0'+str(time_from.month)+'-'+str(time_from.day)+'T'+str(time_from.hour - 1)+':'+str(time_from.minute)+':'+str(time_from.second)+'Z'
 #print str_time_from
 url_to_use = urllib.quote_plus(str_time_from)
