@@ -22,7 +22,9 @@ def pseudo_cron_job(get_from_url, push_to_url):
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
             for i in range(len(updates_df["sensors"][0])):
                 forward.append({"collection":{"weight": updates_df["sensors"][0]["readings"][i]["sensorValue"]}})
+                print updates_df["sensors"][1]["readings"][i]["sensorValue"]
                 r = requests.post(push_to_url + updates_df["sensors"][1]["readings"][i]["sensorValue"] + "/collections", data=json.dumps(forward[i]), headers=headers)
+
             print json.dumps(forward)
 
 
